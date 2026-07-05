@@ -1,0 +1,32 @@
+#!/bin/bash
+# -----------------------------------------------------------------------------
+# LEAF-2 SYSTEM BOOT AUTOMATION
+# -----------------------------------------------------------------------------
+
+# Wait 5 seconds to guarantee Netplan has fully initialized the core bridges
+sleep 5
+
+# Step 1: Force the kernel lookup engine to map VRF interfaces to Table 4
+ip rule add from all oif vrf1 lookup 4
+ip rule add from all iif vrf1 lookup 4
+
+# Step 2: Build the Namespace Container and Host-B Virtual Cable Pair
+ip netns add host-b-vl20
+ip link add veth-host-b type veth peer name host-nic
+ip link set host-nic netns host-b-vl20
+
+# Step 3: Wire the cable to br20 and bring it up
+ip link set veth-host-b master br20
+ip link set veth-host-b up
+
+# Step 4: Configure internal Host-B parameters and Default Gateway (VLAN 20)
+ip netns exec host-b-vl20 ip address add 10.1.20.50/24 dev host-nic
+ip netns exec host-b-vl20 ip link set host-nic up
+ip netns exec host-b-vl20 ip link set lo up
+ip netns exec host-b-vl20 ip route add default via 10.1.20.1
+
+# Step 5: Flush neighbor caches to prevent stale handshakes
+ip netns exec host-b-vl20 ip neigh flush all
+
+exit 0
+

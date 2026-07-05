@@ -1,0 +1,58 @@
+network:
+  version: 2
+  renderer: networkd
+
+  # 1. Underlay Physical Data Plane Cables
+  ethernets:
+    ens160:
+      dhcp4: true  
+    ens161:
+      dhcp4: false
+    ens256:
+      dhcp4: false
+
+  # 2. Virtual Routing and Forwarding Isolation Chamber (THE FIX IS HERE)
+  vrfs:
+    vrf1:
+      table: 4
+      interfaces: [br10, br20, br50000] # We pull the bridges up into the VRF here!
+
+  # 3. Layer 2 Bridge Domains
+  bridges:
+    br10:
+      macaddress: 00:00:5e:00:01:10
+      addresses:
+        - 10.1.10.1/24
+    br20:
+      interfaces: [veth-host-b]  
+      macaddress: 00:00:5e:00:01:20
+      addresses:
+        - 10.1.20.1/24
+    br50000:
+      interfaces: [vxlan50000]   
+      macaddress: b6:c7:42:55:d6:cc  
+      addresses:
+        - 10.254.254.2/30
+
+  # 4. Virtual Tunnel Enclosures (VXLAN Overlays)
+  tunnels:
+    vxlan50000:
+      mode: vxlan
+      id: 50000
+      port: 4789
+      local: 22.22.22.22         
+    vxlan10:
+      mode: vxlan
+      id: 10010
+      port: 4789
+      local: 22.22.22.22
+    vxlan20:
+      mode: vxlan
+      id: 10020
+      port: 4789
+      local: 22.22.22.22
+
+  # 5. Virtual End-Host Cables 
+  virtual-ethernets:
+    veth-host-b:
+      peer: host-nic
