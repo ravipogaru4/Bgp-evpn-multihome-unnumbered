@@ -1,0 +1,35 @@
+leaf-1# show bgp l2vpn evpn route type 2
+BGP table version is 143, local router ID is 11.11.11.11
+Status codes: s suppressed, d damped, h history, * valid, > best, i - internal
+Origin codes: i - IGP, e - EGP, ? - incomplete
+EVPN type-1 prefix: [1]:[EthTag]:[ESI]:[IPlen]:[VTEP-IP]:[Frag-id]
+EVPN type-2 prefix: [2]:[EthTag]:[MAClen]:[MAC]:[IPlen]:[IP]
+EVPN type-3 prefix: [3]:[EthTag]:[IPlen]:[OrigIP]
+EVPN type-4 prefix: [4]:[ESI]:[IPlen]:[OrigIP]
+EVPN type-5 prefix: [5]:[EthTag]:[IPlen]:[IP]
+
+   Network          Next Hop            Metric LocPrf Weight Path
+                    Extended Community
+Route Distinguisher: 22.22.22.22:10020
+ *>  [2]:[0]:[48]:[6e:5f:e5:96:97:18] RD 22.22.22.22:10020
+                    22.22.22.22                            0 65000 65001 i
+                    RT:65001:10020 ET:8
+ *=  [2]:[0]:[48]:[6e:5f:e5:96:97:18] RD 22.22.22.22:10020
+                    22.22.22.22                            0 65000 65001 i
+                    RT:65001:10020 ET:8
+ *>  [2]:[0]:[48]:[6e:5f:e5:96:97:18]:[32]:[10.1.20.50] RD 22.22.22.22:10020
+                    22.22.22.22                            0 65000 65001 i
+                    RT:65001:10020 RT:65001:50000 ET:8 Rmac:b6:c7:42:55:d6:cc
+ *=  [2]:[0]:[48]:[6e:5f:e5:96:97:18]:[32]:[10.1.20.50] RD 22.22.22.22:10020
+                    22.22.22.22                            0 65000 65001 i
+                    RT:65001:10020 RT:65001:50000 ET:8 Rmac:b6:c7:42:55:d6:cc
+ *>  [2]:[0]:[48]:[6e:5f:e5:96:97:18]:[128]:[fe80::6c5f:e5ff:fe96:9718] RD 22.22.22.22:10020
+                    22.22.22.22                            0 65000 65001 i
+                    RT:65001:10020 ET:8
+ *=  [2]:[0]:[48]:[6e:5f:e5:96:97:18]:[128]:[fe80::6c5f:e5ff:fe96:9718] RD 22.22.22.22:10020
+                    22.22.22.22                            0 65000 65001 i
+                    RT:65001:10020 ET:8
+
+Displayed 3 prefixes (6 paths) (of requested type)
+leaf-1# 
+leaf-1# 
