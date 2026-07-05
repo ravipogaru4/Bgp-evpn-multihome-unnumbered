@@ -1,0 +1,31 @@
+#!/bin/bash
+# -----------------------------------------------------------------------------
+# LEAF-1 SYSTEM BOOT AUTOMATION
+# -----------------------------------------------------------------------------
+
+# Wait 5 seconds to guarantee Netplan has fully initialized the core bridges
+sleep 5
+
+# Step 1: Force the kernel lookup engine to map VRF interfaces to Table 4
+ip rule add from all oif vrf1 lookup 4
+ip rule add from all iif vrf1 lookup 4
+
+# Step 2: Build the Namespace Container and Host-A Virtual Cable Pair
+ip netns add host-a
+ip link add veth-host-a type veth peer name host-nic
+ip link set host-nic netns host-a
+
+# Step 3: Wire the cable to br10 and bring it up
+ip link set veth-host-a master br10
+ip link set veth-host-a up
+
+# Step 4: Configure internal Host-A parameters and Default Gateway
+ip netns exec host-a ip address add 10.1.10.50/24 dev host-nic
+ip netns exec host-a ip link set host-nic up
+ip netns exec host-a ip link set lo up
+ip netns exec host-a ip route add default via 10.1.10.1
+
+# Step 5: Flush neighbor caches to prevent stale handshakes
+ip netns exec host-a ip neigh flush all
+
+exit 0
